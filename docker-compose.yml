@@ -1,0 +1,37 @@
+services:
+  simulator:
+    image: ghcr.io/c4sbf/obs-simulators-building:latest
+    platform: linux/amd64
+    networks:
+      - bacnet_net
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: backend
+      args:
+        INSTALL_AI: "${INSTALL_AI:-false}"
+    ports:
+      - "8000:8000"
+    environment:
+      - HF_TOKEN=${HF_TOKEN:-}
+    depends_on:
+      - simulator
+    networks:
+      - bacnet_net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - bacnet_net
+    restart: unless-stopped
+
+networks:
+  bacnet_net:
+    external: true
