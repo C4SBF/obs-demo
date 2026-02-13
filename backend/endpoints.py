@@ -37,10 +37,14 @@ class NodeResponse(BaseModel):
 
     @classmethod
     def from_node(cls, node: Node) -> "NodeResponse":
-        return cls(id=node.id, type=node.type, tags=list(node.tags), attrs=dict(node.attrs))
+        return cls(
+            id=node.id, type=node.type, tags=list(node.tags), attrs=dict(node.attrs)
+        )
 
     def to_node(self) -> Node:
-        return Node(id=self.id, type=self.type, tags=list(self.tags), attrs=dict(self.attrs))
+        return Node(
+            id=self.id, type=self.type, tags=list(self.tags), attrs=dict(self.attrs)
+        )
 
 
 class EdgeResponse(BaseModel):
@@ -53,10 +57,20 @@ class EdgeResponse(BaseModel):
 
     @classmethod
     def from_edge(cls, edge: Edge) -> "EdgeResponse":
-        return cls(source=edge.source, target=edge.target, type=edge.type, attrs=dict(edge.attrs))
+        return cls(
+            source=edge.source,
+            target=edge.target,
+            type=edge.type,
+            attrs=dict(edge.attrs),
+        )
 
     def to_edge(self) -> Edge:
-        return Edge(source=self.source, target=self.target, type=self.type, attrs=dict(self.attrs))
+        return Edge(
+            source=self.source,
+            target=self.target,
+            type=self.type,
+            attrs=dict(self.attrs),
+        )
 
 
 class GraphMetaResponse(BaseModel):
@@ -209,6 +223,9 @@ async def discover_census(
     bbmd_ip: str | None = Query(None),
 ) -> list[DeviceCensusEntry]:
     """Run BACnet network discovery and return graph + census."""
+    census: list[DeviceCensusEntry] = []
+    uid_map: dict[int, str] = {}
+
     logger.info("Starting network discovery (timeout=%ss)", timeout)
     result = await scan_network(
         protocol=Protocol.BACNET,
@@ -222,9 +239,6 @@ async def discover_census(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Network scan failed: {detail}",
         )
-
-    census: list[DeviceCensusEntry] = []
-    uid_map: dict[int, str] = {}
 
     for device in result.data:
         census_row = _device_to_census(device)
@@ -329,7 +343,9 @@ def enhance_graph_endpoint(body: EnhanceRequest) -> EnhanceResponse:
             backend=opts_dict.get("backend", "transformers"),
             model=opts_dict.get("model", "HuggingFaceTB/SmolLM2-1.7B-Instruct"),
             base_url=opts_dict.get("base_url", "http://localhost:11434/v1"),
-            min_confidence_threshold=float(opts_dict.get("min_confidence_threshold", 0.7)),
+            min_confidence_threshold=float(
+                opts_dict.get("min_confidence_threshold", 0.7)
+            ),
             batch_size=int(opts_dict.get("batch_size", 10)),
             force=bool(opts_dict.get("force", False)),
         )
@@ -337,8 +353,10 @@ def enhance_graph_endpoint(body: EnhanceRequest) -> EnhanceResponse:
         # Log enhancement request details
         nodes_with_class = [n for n in graph_input.nodes if "class" in n.attrs]
         low_confidence = [
-            n for n in nodes_with_class
-            if n.attrs.get("class_confidence", 0.0) < llm_options.min_confidence_threshold
+            n
+            for n in nodes_with_class
+            if n.attrs.get("class_confidence", 0.0)
+            < llm_options.min_confidence_threshold
         ]
         logger.info(
             "Enhance request: %d nodes, %d classified, %d below threshold %.2f",
