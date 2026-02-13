@@ -1,0 +1,587 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Pause all CSS animations within a container */
+.animations-paused,
+.animations-paused * {
+  animation-play-state: paused !important;
+}
+
+/* Custom app colors for graph/canvas components */
+@theme {
+  --color-bg-primary: #0d1117;
+  --color-bg-secondary: #161b22;
+  --color-bg-tertiary: #21262d;
+  --color-text-primary: #e6edf3;
+  --color-text-secondary: #8b949e;
+  --color-accent-blue: #58a6ff;
+  --color-accent-green: #3fb950;
+  --color-accent-purple: #a371f7;
+  --color-accent-orange: #d29922;
+  --color-accent-red: #f85149;
+  --color-relation: #484f58;
+}
+
+/* shadcn theme — dark only (app is always dark) */
+:root {
+  --radius: 0.5rem;
+  --background: #0d1117;
+  --foreground: #e6edf3;
+  --card: #161b22;
+  --card-foreground: #e6edf3;
+  --popover: #161b22;
+  --popover-foreground: #e6edf3;
+  --primary: #58a6ff;
+  --primary-foreground: #ffffff;
+  --secondary: #21262d;
+  --secondary-foreground: #e6edf3;
+  --muted: #21262d;
+  --muted-foreground: #8b949e;
+  --accent: #21262d;
+  --accent-foreground: #e6edf3;
+  --destructive: #f85149;
+  --destructive-foreground: #ffffff;
+  --border: #30363d;
+  --input: #30363d;
+  --ring: #58a6ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* ── AI gradient button ── */
+.ai-gradient-btn {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
+  background-size: 200% 200%;
+  transition: opacity 0.2s;
+}
+
+.ai-gradient-btn:hover {
+  opacity: 0.9;
+}
+
+/* ── Header gradient glow ── */
+@keyframes header-glow {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Existing ── */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Canvas – Active scanning ambient effects
+   ═══════════════════════════════════════════════ */
+@keyframes canvas-breathe {
+
+  0%,
+  100% {
+    opacity: 0.03;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.08;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes scan-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 0.6;
+    border-width: 3px;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+@keyframes grid-pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Equipment icon: pop in → hold → vanish when signal arrives (2s total) */
+@keyframes equip-cycle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+
+  15% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  25% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  85% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+}
+
+/* OBS hub: arrives from hero position then breathes */
+@keyframes hub-arrive {
+  0% {
+    transform: translate(-50%, -150%) scale(2);
+    opacity: 1;
+  }
+
+  40% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  /* Breathing pulse loop */
+  60% {
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+
+  80% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
+/* Hub scale-in — icon appears from a dot when no hero was visible */
+@keyframes hub-scale-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translate(-50%, -50%) scale(0.45);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+}
+
+/* Hub fade-out — softly disappear when scan ends */
+@keyframes hub-fade-out {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Radar ring — expanding pulse from center hub */
+@keyframes radar-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Signal dot: travels from equipment toward center, timed within the equip-cycle window */
+@keyframes signal-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.9;
+  }
+
+  90% {
+    opacity: 0.9;
+  }
+
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Phase 1 – Ambient orb float keyframes
+   ═══════════════════════════════════════════════ */
+@keyframes orb-float-1 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(40px, -30px) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+@keyframes orb-float-2 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-30px, 40px) scale(0.97);
+  }
+
+  66% {
+    transform: translate(25px, -25px) scale(1.03);
+  }
+}
+
+@keyframes orb-float-3 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(20px, 30px) scale(1.04);
+  }
+
+  66% {
+    transform: translate(-35px, -20px) scale(0.96);
+  }
+}
+
+@keyframes hero-bob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(88, 166, 255, 0.3), 0 0 40px rgba(163, 113, 247, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(88, 166, 255, 0.5), 0 0 60px rgba(163, 113, 247, 0.25);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Phase 2 – Node entrance animation
+   ═══════════════════════════════════════════════ */
+@keyframes node-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(20px);
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1.03) translateY(-2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes mini-node-enter {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Selection ring expansion */
+@keyframes selection-ring-expand {
+  0% {
+    box-shadow: 0 0 0 0px var(--ring-color), 0 0 0px var(--ring-color);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px var(--ring-color), 0 0 25px var(--ring-color);
+  }
+
+  100% {
+    box-shadow: 0 0 0 4px var(--ring-color), 0 0 20px var(--glow-color);
+  }
+}
+
+/* AI node breathing glow */
+@keyframes node-glow-breathe {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(163, 113, 247, 0.5), 0 0 40px rgba(163, 113, 247, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(163, 113, 247, 0.7), 0 0 50px rgba(163, 113, 247, 0.35);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Phase 2 – Connection draw-in animation
+   ═══════════════════════════════════════════════ */
+@keyframes connection-draw {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Phase 3 – Discovery phase icons
+   ═══════════════════════════════════════════════ */
+
+/* Radar sweep for census phase */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scan equalizer bars */
+@keyframes eq-bar-1 {
+
+  0%,
+  100% {
+    height: 40%;
+  }
+
+  50% {
+    height: 100%;
+  }
+}
+
+@keyframes eq-bar-2 {
+
+  0%,
+  100% {
+    height: 60%;
+  }
+
+  50% {
+    height: 30%;
+  }
+}
+
+@keyframes eq-bar-3 {
+
+  0%,
+  100% {
+    height: 30%;
+  }
+
+  50% {
+    height: 80%;
+  }
+}
+
+/* Striped progress bar */
+@keyframes stripe-move {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+/* AI morphing blob */
+@keyframes morph-blob {
+
+  0%,
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  25% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+
+  50% {
+    border-radius: 50% 60% 30% 60% / 30% 70% 60% 40%;
+  }
+
+  75% {
+    border-radius: 40% 30% 60% 50% / 60% 40% 70% 30%;
+  }
+}
+
+/* Blinking cursor */
+@keyframes blink-cursor {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Phase transition flash */
+@keyframes phase-flash {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Phase 3 – Celebration dots
+   ═══════════════════════════════════════════════ */
+@keyframes celebration-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--burst-x), var(--burst-y)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Phase 4 – Scroll fade mask for sidebar
+   ═══════════════════════════════════════════════ */
+.sidebar-scroll-fade {
+  mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
+}

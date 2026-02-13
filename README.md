@@ -1,12 +1,32 @@
-# New Project Template
+# Open Building Stack Demo
 
-This repository contains a template that can be used to seed a repository for a new C4SB Foundation project.
+Interactive visualization and discovery tool for building automation networks with ontology mapping and AI classification.
 
-The template uses the [Community Specification License](https://github.com/CommunitySpecification/Community_Specification).
+## Features
 
-## How to use this template
+- **Network Discovery**: Scan BACnet networks to discover devices and points
+- **Graph Visualization**: Interactive canvas with zoom, pan, and node connections
+- **Ontology Mapping**: Classify discovered entities using building ontologies (Brick, ASHRAE 223P)
+- **AI Enhancement**: Improve low-confidence classifications with LLM-powered suggestions
+- **Schema Editor**: View and edit raw discovery data in YAML format
 
-1. Clone it from GitHub.
-2. Create a new local repository and copy the files into it.
-3. Modify README.md and other files to represent your project, not this template project.
-4. Develop your new project.
+## Getting Started
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173 to view the application.
+
+## Building for Production
+
+```bash
+npm run build
+npm run preview  # Preview the production build
+```
+
+## License
+
+See [License.md](License.md) for details.
