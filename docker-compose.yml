@@ -1,0 +1,74 @@
+x-simulator: &simulator
+  image: ghcr.io/c4sbf/obs-simulators-building:latest
+  platform: linux/amd64
+  entrypoint: ["uv", "run", "building-simulator"]
+  networks:
+    - bacnet_net
+  restart: unless-stopped
+
+services:
+  sim-ahu:
+    <<: *simulator
+    command: ["--equipment", "ahu", "--instance", "400001"]
+
+  sim-vav0:
+    <<: *simulator
+    command: ["--equipment", "vav0", "--instance", "400010"]
+
+  sim-vav1:
+    <<: *simulator
+    command: ["--equipment", "vav1", "--instance", "400011"]
+
+  sim-vav2:
+    <<: *simulator
+    command: ["--equipment", "vav2", "--instance", "400012"]
+
+  sim-vav3:
+    <<: *simulator
+    command: ["--equipment", "vav3", "--instance", "400013"]
+
+  sim-vav4:
+    <<: *simulator
+    command: ["--equipment", "vav4", "--instance", "400014"]
+
+  sim-vav5:
+    <<: *simulator
+    command: ["--equipment", "vav5", "--instance", "400015"]
+
+  sim-chiller:
+    <<: *simulator
+    command: ["--equipment", "chiller", "--instance", "400020"]
+
+  sim-meter:
+    <<: *simulator
+    command: ["--equipment", "meter", "--instance", "400030"]
+
+  backend:
+    build:
+      context: backend
+      args:
+        INSTALL_AI: "${INSTALL_AI:-false}"
+    ports:
+      - "8000:8000"
+    environment:
+      - HF_TOKEN=${HF_TOKEN:-}
+    depends_on:
+      - sim-ahu
+    networks:
+      - bacnet_net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - bacnet_net
+    restart: unless-stopped
+
+networks:
+  bacnet_net:
+    external: true

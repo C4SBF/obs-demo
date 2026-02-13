@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 import pkg from './package.json' with { type: 'json' }
 
 export default defineConfig({
-  base: process.env.GITHUB_PAGES ? '/obs-discovery/' : '/',
+  base: process.env.GITHUB_PAGES ? '/obs-demo/' : '/',
   define: {
     '__DEMO__': JSON.stringify(!!process.env.GITHUB_PAGES || !!process.env.DEMO),
     '__VERSION__': JSON.stringify(pkg.version),
